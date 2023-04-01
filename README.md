@@ -12,15 +12,25 @@ $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
-Run the script with the repository name as an argument.
+Run the script with the repository name, per page and tag limit as arguments.
 
 ```bash
-$ python main.py LimeSurvey/LimeSurvey
+$ export GITHUB_TOKEN="YOUR_PERSONAL_ACCESS_TOKEN"
+$ python main.py LimeSurvey/LimeSurvey 100 1000
+# 100 tags per page, 1000 tags limit
+# default values are 10 and -1 respectively if not provided
+# -1 means no limit
 ```
 
 Replace `LimeSurvey/LimeSurvey` with the repository you want to check.
 
 ## Sample Data
+
+The following is a sample of the data that is returned for the following command.
+
+```bash
+$ python main.py LimeSurvey/LimeSurvey 100 > limesurvey.json
+```
 
 ```json
 [
