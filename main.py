@@ -2,6 +2,23 @@ import os
 import requests
 import sys
 from datetime import datetime
+import urllib.request
+import zipfile
+
+def download_file(url, file_name):
+    response = urllib.request.urlopen(url)
+    with open(file_name, 'wb') as f:
+        f.write(response.read())
+
+def unzip_file(zip_file, extract_path):
+    with zipfile.ZipFile(zip_file) as zip_ref:
+        zip_ref.extractall(extract_path)
+
+def download_and_unzip(url, file_name, extract_path):
+    print('Downloading file...')
+    download_file(url, file_name)
+    print('Unzipping file...')
+    unzip_file(file_name, extract_path)
 
 def check_repo(repo, headers):
     url = f"https://api.github.com/repos/{repo}"
@@ -11,7 +28,6 @@ def check_repo(repo, headers):
     else:
         print(response.json()['message'])
         return False
-
 
 def fetch_commit_date_by_url(url, headers):
     response = requests.get(url, headers=headers)
@@ -54,6 +70,10 @@ if __name__ == "__main__":
     repository = str(sys.argv[1])
     per_page = int(sys.argv[2]) if len(sys.argv) > 2 else 10
     tag_limit = int(sys.argv[3]) if len(sys.argv) > 3 else -1
+    extract_path = str(sys.argv[4]) if len(sys.argv) > 4 else str(os.getcwd())
+    if not os.path.exists(extract_path):
+        print('Creating directory: ' + extract_path)
+        os.makedirs(extract_path)
     token = os.environ.get("GITHUB_TOKEN")
     headers = {'Accept': 'application/vnd.github.v3+json',
                'Authorization': f'token {token}'}
@@ -61,4 +81,9 @@ if __name__ == "__main__":
         print("Repository not found")
         sys.exit(1)
     tags = fetch_tags(repository, headers, per_page, tag_limit)
-    print(tags)
+    print(f"Fetched {len(tags)} tags")
+    for tag in tags:
+        print(f"Tag: {tag['name']}")
+        print('Starting download and unzip of ' + tag['name'] + ' to ' + extract_path + '...')
+        download_and_unzip(tag['zipball_url'], tag['name'] + '.zip', extract_path)
+        print('Completed! ' + tag['name'] + ' to ' + extract_path + tag['name'] + '.zip...')

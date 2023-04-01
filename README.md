@@ -16,10 +16,9 @@ Run the script with the repository name, per page and tag limit as arguments.
 
 ```bash
 $ export GITHUB_TOKEN="YOUR_PERSONAL_ACCESS_TOKEN"
-$ python main.py LimeSurvey/LimeSurvey 100 1000
-# 100 tags per page, 1000 tags limit
-# default values are 10 and -1 respectively if not provided
-# -1 means no limit
+$ python main.py LimeSurvey/LimeSurvey 100 1000 /tmp/limesurvey/releases
+# 100 tags per page, 1000 tags limit default values are 10 and -1 respectively if not provided, -1 means no limit.
+# The 4th argument is the directory to extract the tag files, default value is the current directory.
 ```
 
 Replace `LimeSurvey/LimeSurvey` with the repository you want to check.
